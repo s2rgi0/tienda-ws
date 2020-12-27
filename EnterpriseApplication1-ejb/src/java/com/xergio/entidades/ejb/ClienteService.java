@@ -7,12 +7,15 @@ package com.xergio.entidades.ejb;
 
 import com.xergio.entidades.jpa.Cliente;
 import com.xergio.tienda.entidades.dto.ClienteDTO;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *
@@ -51,9 +54,19 @@ public class ClienteService {
         return cliente;
     }
     
+    
+    
     public ClienteDTO transformarJpaDto(Cliente clienteEntidad){
         
-        ClienteDTO clienteDto = new ClienteDTO(clienteEntidad.getId(),clienteEntidad.getNombres(),clienteEntidad.getApellidos());
+        ClienteDTO clienteDto = new ClienteDTO();
+        try {
+            //ClienteDTO clienteDto = new ClienteDTO(clienteEntidad.getId(),clienteEntidad.getNombres(),clienteEntidad.getApellidos());
+            BeanUtils.copyProperties(clienteDto, clienteEntidad);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(ClienteService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClienteService.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         return clienteDto;
     }
